@@ -111,7 +111,7 @@ const VerticalCardProduct = ({ category, heading }) => {
                       {displayINRCurrency(product?.price)}
                     </p>
                   </div>
-                  <button className="bg-red-500 hover:bg-red-700 px-3 py-0.5 rounded-full text-white text-sm" onClick={(e) => handleAddToCart(e, product?._id)}>
+                  <button className="bg-red-500 hover:bg-red-700 px-3 py-2 rounded-full text-white text-sm" onClick={(e) => handleAddToCart(e, product?._id)}>
                     Add to cart
                   </button>
                 </div>

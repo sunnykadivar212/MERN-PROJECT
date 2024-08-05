@@ -4,7 +4,7 @@ const updateAddToCartProduct = async (req, res) => {
   try {
     const addToCartProductId = req?.body?._id;
 
-    const qty = req.body.quantity;
+    const qty = req?.body?.quantity;
 
     const updateProduct = await addToCartModel.updateOne(
       { _id: addToCartProductId },

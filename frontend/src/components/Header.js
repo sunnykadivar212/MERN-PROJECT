@@ -17,10 +17,10 @@ const Header = () => {
   const dispatch = useDispatch();
   const context = useContext(Context);
   const navigate = useNavigate();
-  const searchInput = useLocation()
-  const URLSearch = new URLSearchParams(searchInput?.search)
+  const searchInput = useLocation();
+  const URLSearch = new URLSearchParams(searchInput?.search);
   const searchQuery = URLSearch.getAll("q");
-  const [search,setSearch]= useState(searchQuery)
+  const [search, setSearch] = useState(searchQuery);
 
   const handleLogout = async () => {
     const fetchData = await fetch(SummeryApi.logout_user.url, {
@@ -33,7 +33,7 @@ const Header = () => {
     if (data.success) {
       toast.success(data.message);
       dispatch(setUserDetails(null));
-      navigate("/")
+      navigate("/");
     }
 
     if (data.error) {
@@ -43,7 +43,7 @@ const Header = () => {
 
   const handleSearch = (e) => {
     const { value } = e.target;
-    setSearch(value)
+    setSearch(value);
     if (value) {
       navigate(`/search?q=${value}`);
     } else {
@@ -100,6 +100,13 @@ const Header = () => {
                       Admin panel
                     </Link>
                   )}
+                  <Link
+                    to={"/order"}
+                    className="whitespace-nowrap hover:bg-slate-100 p-2 hidden md:block"
+                    onClick={() => setMenuDisplay((prev) => !prev)}
+                  >
+                    Order
+                  </Link>
                 </nav>
               </div>
             )}

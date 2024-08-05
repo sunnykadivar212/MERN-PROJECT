@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import SummeryApi from "../common/ApiURI";
 import Context from "../context";
 import displayINRCurrency from "../helpers/displayCurrency";
 import { MdDelete } from "react-icons/md";
+import { loadStripe } from "@stripe/stripe-js";
+import SummeryApi from "../common/ApiURI";
 
 const Cart = () => {
   const [data, setData] = useState([]);
@@ -12,16 +13,15 @@ const Cart = () => {
 
   useEffect(() => {
     setLoading(true);
-    handleLoading()
+    handleLoading();
     setLoading(false);
   }, []);
 
-  const handleLoading =async()=>{
-    await fetchData()
-  }
+  const handleLoading = async () => {
+    await fetchData();
+  };
 
   const fetchData = async () => {
-    
     const response = await fetch(SummeryApi.addToCartProductView.url, {
       method: SummeryApi.addToCartProductView.method,
       credentials: "include",
@@ -29,7 +29,7 @@ const Cart = () => {
         "content-type": "application/json"
       }
     });
-    
+
     const dataResponse = await response.json();
 
     if (dataResponse.success) {
@@ -109,6 +109,28 @@ const Cart = () => {
     0
   );
 
+  const handlePayment = async () => {
+    const stripePromise = await loadStripe(
+      process.env.REACT_APP_STRIPE_PUBLIC_KEY
+    );
+
+    const response = await fetch(SummeryApi.payment.url, {
+      method: SummeryApi.payment.method,
+      credentials: "include",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ cartItems: data })
+    });
+
+    const responseData = await response.json();
+
+    console.log("reponseData==>", responseData);
+    if (responseData?.id) {
+      stripePromise.redirectToCheckout({ sessionId: responseData?.id });
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <div className="text-center text-lg my-3">
@@ -121,10 +143,10 @@ const Cart = () => {
         {/**View Product */}
         <div className="w-full max-w-3xl">
           {loading
-            ? loadingCart.map((el,index) => {
+            ? loadingCart.map((el, index) => {
                 return (
                   <div
-                    key={el + "AddToCart"+index}
+                    key={el + "AddToCart" + index}
                     className="w-full bg-slate-200 h-32 my-2 rounded border border-slate-300 animate-pulse"
                   ></div>
                 );
@@ -190,28 +212,33 @@ const Cart = () => {
         </div>
 
         {/**Summery  */}
-        <div className="w-full max-w-sm mt-5 lg:mt-0">
-          {loading ? (
-            <div className="h-36 bg-slate-200 border border-slate-300 animate-pulse"></div>
-          ) : (
-            <div className="h-36 bg-white">
-              <h2 className="text-white bg-red-500 px-4 py-1">Summary </h2>
-              <div className="flex items-center justify-between px-4 text-lg font-medium text-slate-600 gap-2">
-                <p>Qyantity</p>
-                <p>{totalQty}</p>
-              </div>
+        {data[0] && (
+          <div className="w-full max-w-sm mt-5 lg:mt-0">
+            {loading ? (
+              <div className="h-36 bg-slate-200 border border-slate-300 animate-pulse"></div>
+            ) : (
+              <div className="h-36 bg-white">
+                <h2 className="text-white bg-red-500 px-4 py-1">Summary </h2>
+                <div className="flex items-center justify-between px-4 text-lg font-medium text-slate-600 gap-2">
+                  <p>Quantity</p>
+                  <p>{totalQty}</p>
+                </div>
 
-              <div className="flex items-center justify-between px-4 text-lg font-medium text-slate-600 gap-2">
-                <p>Total Price</p>
-                <p>{displayINRCurrency(totalPrice)}</p>
-              </div>
+                <div className="flex items-center justify-between px-4 text-lg font-medium text-slate-600 gap-2">
+                  <p>Total Price</p>
+                  <p>{displayINRCurrency(totalPrice)}</p>
+                </div>
 
-              <button className="bg-blue-600 text-white w-full p-2">
-                Payment
-              </button>
-            </div>
-          )}
-        </div>
+                <button
+                  className="bg-blue-600 text-white w-full p-2"
+                  onClick={handlePayment}
+                >
+                  Payment
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

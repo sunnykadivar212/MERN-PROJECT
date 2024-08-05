@@ -7,7 +7,7 @@ async function updateProductController(req, res) {
       throw new Error("Permossion denied");
     }
 
-    const { _id, ...resBody } = req.body;
+    const { _id, ...resBody } = req?.body;
 
     const updateProduct = await productModel.findByIdAndUpdate(_id, resBody);
 

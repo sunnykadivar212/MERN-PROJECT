@@ -3,8 +3,8 @@ const userModel = require("../../models/userModel");
 
 async function userSignUpController(req, res) {
   try {
-    const { email, password, name } = req.body;
-    console.log("User==>",req.body)
+    const { email, password, name } = req?.body;
+
     const user = await userModel.findOne({ email });
 
     if (user) {

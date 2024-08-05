@@ -4,8 +4,8 @@ const userModel = require("../../models/userModel");
 
 async function userSignInController(req, res) {
   try {
-    const { email, password } = req.body;
-    console.log("userData==>>", req.body);
+    const { email, password } = req?.body;
+
     if (!email) {
       throw new Error("Please provide email");
     }
@@ -20,8 +20,6 @@ async function userSignInController(req, res) {
     }
 
     const checkPassword = await bcrypt.compare(password, user.password);
-
-    console.log("checkPassoword", checkPassword);
 
     if (checkPassword) {
       const tokenData = {
